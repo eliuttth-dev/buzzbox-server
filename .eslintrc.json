@@ -1,0 +1,57 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "env": {
+    "node": true,
+    "es2020": true
+  },
+  "rules": {
+    "no-console": ["warn"], // Warn on console.log usage, but allow it
+    "no-debugger": "error", // Don't allow debugger statements in production code
+    "consistent-return": "error", // Require consistent return behavior
+    "eqeqeq": ["error", "always"], // Enforce the use of strict equality (===, !==)
+    "curly": ["error", "all"], // Enforce consistent use of curly braces for blocks
+
+    // TypeScript-specific rules
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }], // No unused variables, except for unused arguments starting with _
+    "@typescript-eslint/explicit-module-boundary-types": "off", // Disable enforcing explicit return types on functions (for flexibility)
+    "@typescript-eslint/no-explicit-any": "warn", // Warn about usage of 'any' type, encourage more specific types
+    "@typescript-eslint/no-non-null-assertion": "error", // Don't allow non-null assertions (!!) (e.g. value! for TypeScript)
+    "@typescript-eslint/ban-ts-comment": ["error", { "ts-ignore": "allow-with-description" }], // Limit usage of @ts-ignore
+
+    // Code Style
+    "semi": ["error", "always"], // Enforce semicolons at the end of statements
+    "indent": ["error", 2], // Enforce 2-space indentation
+    "brace-style": ["error", "1tbs", { "allowSingleLine": true }], // Enforce 1TBS style for braces
+    "no-trailing-spaces": "error", // Disallow trailing whitespace at the end of lines
+    "eol-last": ["error", "always"], // Ensure there is always a newline at the end of files
+
+    // Best practices for asynchronous code
+    "no-async-promise-executor": "error", // Avoid using async functions in the Promise constructor
+    "prefer-const": "error", // Prefer const over let when variables are never reassigned
+    "no-var": "error", // Disallow the use of var to declare variables, use let or const
+    "no-return-await": "error", // Avoid returning a value wrapped in await unless necessary
+
+    // Type-related rules
+    "@typescript-eslint/type-annotation-spacing": "error", // Enforce spacing around type annotations
+    "@typescript-eslint/explicit-function-return-type": "off", // Disable enforcing explicit return types on functions (for flexibility)
+    "arrow-spacing": ["error", { "before": true, "after": true }], // Ensure spacing around arrow function arrows
+    "space-before-blocks": "error", // Enforce a space before block statements
+
+    // Code quality rules
+    "complexity": ["warn", { "max": 10 }], // Limit the complexity of functions (max 10)
+    "max-lines": ["warn", { "max": 200, "skipComments": true, "skipBlankLines": true }], // Limit file length to 200 lines
+    "max-lines-per-function": ["warn", { "max": 50 }], // Limit function length to 50 lines
+    "no-duplicate-imports": "error", // Disallow duplicate imports
+    "no-magic-numbers": ["warn", { "ignore": [0, 1, -1] }] // Disallow magic numbers, but allow common ones like 0, 1, and -1
+  }
+}
+

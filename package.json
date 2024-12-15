@@ -1,0 +1,43 @@
+{
+  "name": "BuzzBox",
+  "version": "1.0.0",
+  "description": "Dinamyc real-time messaging platform",
+  "main": "src/app.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "nodemon --exec ts-node src/app.ts",
+    "lint": "eslint 'src/**/*.{ts}' --fix",
+    "format": "prettier --write 'src/**/*.{ts}'"
+  },
+  "keywords": [
+    "real-time",
+    "chat",
+    "app",
+    "Typescript",
+    "Javascript",
+    "NodeJS"
+  ],
+  "author": "Eliuth Bompart | github.com/eliuttth-dev",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/dotenv": "^8.2.3",
+    "@types/express": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "8.18.0",
+    "@typescript-eslint/parser": "8.18.0",
+    "eslint": "9.17.0",
+    "eslint-config-prettier": "9.1.0",
+    "eslint-plugin-prettier": "5.2.1",
+    "nodemon": "3.1.9",
+    "prettier": "3.4.2",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.2"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "dotenv": "16.4.7",
+    "express": "4.21.2",
+    "mysql2": "3.11.5"
+  }
+}
