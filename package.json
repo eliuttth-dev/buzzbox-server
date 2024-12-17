@@ -8,8 +8,8 @@
     "start": "node dist/app.js",
     "db:init": "ts-node src/db/config.db.ts",
     "dev": "npm run db:init &&  nodemon --exec ts-node src/app.ts",
-    "lint": "eslint 'src/**/*.{ts}' --fix",
-    "format": "prettier --write 'src/**/*.{ts}'"
+    "lint": "eslint 'src/**/*.ts' --fix",
+    "format": "prettier --write \"src/**/*.ts\" "
   },
   "keywords": [
     "real-time",

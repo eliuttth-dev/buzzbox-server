@@ -7,6 +7,7 @@ export const createNewUser = async (data: User) => {
 
   try {
     connection = await pool.getConnection();
+    // Check if user exists
   } catch (err) {
   } finally {
     if (connection) connection.release;
