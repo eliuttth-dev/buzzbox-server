@@ -23,11 +23,6 @@ const dbConfig: any = {
 
 const poll: any = mysql.createPool(dbConfig);
 
-// TODO: CREATE A POPULATE TABLES WHEN DOES NOT EXISTS, IF EXIST POPULATE WITH DATA ASWELL
-// TODO: THE SCRIPT SHOULD DETEC IF THE ENVIRONMENT IS DEV OR PROD, IF IT IS DEV, CREATE (IF DOES NOT EXISTS)
-// THE buzzbox_dev_db AND POPULATE WITH SOME TEST DATA.
-// IF ENV IS PROD, THEN ALL OF THIS SHOULD NOT HAPPEND AND SHOULD NOT CRASH
-
 // Check environment
 if (ENVIRONMENT === 'development') {
   // Verify if DB exists
@@ -98,6 +93,10 @@ if (ENVIRONMENT === 'development') {
         await connection.query(populateUserSchema);
         console.log(`Database Updated. Table has been populated`);
       } else {
+        // Populate tables with test data
+        const populateUserSchema = await schemaResolver(schemaPaths.populateUserTable);
+
+        await connection.query(populateUserSchema);
         console.log(`Users table already exists`);
       }
 
