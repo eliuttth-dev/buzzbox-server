@@ -40,14 +40,10 @@ if (ENVIRONMENT === 'development') {
   const logFilename = path.resolve(logFilePath, "database.log");
 
   (() => {
-    try{
       const folderExists = fs.existsSync(logFilePath);
       const fileExists = fs.existsSync(logFilename)
       if(folderExists === undefined) fs.mkdirSync(logFilePath, {recursive: true});
       if(fileExists === undefined) fs.writeFileSync(logFilePath, logFilename, "utf-8"  );
-    }catch(error:any){
-      console.error(error.message)
-    }
   })()
 
 
