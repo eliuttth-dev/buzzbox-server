@@ -22,10 +22,10 @@
   "author": "Eliuth Bompart | github.com/eliuttth-dev",
   "license": "MIT",
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/dotenv": "^8.2.3",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.10.2",
+    "@types/cors": "2.8.17",
+    "@types/dotenv": "8.2.3",
+    "@types/express": "5.0.0",
+    "@types/node": "22.10.2",
     "@typescript-eslint/eslint-plugin": "8.18.0",
     "@typescript-eslint/parser": "8.18.0",
     "eslint": "9.17.0",
@@ -40,6 +40,7 @@
     "cors": "2.8.5",
     "dotenv": "16.4.7",
     "express": "4.21.2",
-    "mysql2": "3.11.5"
+    "mysql2": "3.11.5",
+    "winston": "3.17.0"
   }
 }

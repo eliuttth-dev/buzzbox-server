@@ -1,12 +1,13 @@
-import dotenv, { populate } from 'dotenv';
 import mysql, { createConnection, Connection, RowDataPacket } from 'mysql2/promise';
 import { readFile } from 'fs/promises';
+import winston from 'winston';
+import dotenv from 'dotenv';
+import fs from "node:fs";
 import path from 'path';
 
 dotenv.config();
 
 const { DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_CONNECTION_LIMIT, DB_QUEUE_LIMIT, ENVIRONMENT } = process.env;
-
 const PORT = DB_PORT ? parseInt(DB_PORT) : 3306;
 
 const dbConfig: any = {
@@ -23,15 +24,40 @@ const dbConfig: any = {
 
 const poll: any = mysql.createPool(dbConfig);
 
+// Removed: check if database exists, because if it does not exists in dbConfig it throws an error,
+// because you cannot establish a connection with a database that does not exists, it's an error from
+// MYSQL, so does not make sense "check if exists", because if does not exists in first place, you're not
+// allowed to interact with the MYSQL schema
+
+// The basic "check" it is literally write the correct database name or create it from MYSQL.
+// Or maybe "TODO: remove database:DB_NAME field from dbConfig and check if passed database name
+// exists, if exists, everything good, if does not exists, then create it."
+
 // Check environment
 if (ENVIRONMENT === 'development') {
-  // Verify if DB exists
-  const databaseExists = async (connection: Connection, dbName: string): Promise<boolean> => {
-    const query = `SHOW DATABASES LIKE ?`;
-    const [databases] = await connection.query<RowDataPacket[]>(query, dbName);
 
-    return databases.length > 0;
-  };
+  const logFilePath = path.resolve(__dirname, "../../", "logs");
+  const logFilename = path.resolve(logFilePath, "database.log");
+
+  (() => {
+    try{
+      const folderExists = fs.existsSync(logFilePath);
+      const fileExists = fs.existsSync(logFilename)
+      if(folderExists === undefined) fs.mkdirSync(logFilePath, {recursive: true});
+      if(fileExists === undefined) fs.writeFileSync(logFilePath, logFilename, "utf-8"  );
+    }catch(error:any){
+      console.error(error.message)
+    }
+  })()
+
+
+const logger = winston.createLogger({
+  level: "info",
+  format: winston.format.json(),
+  defaultMeta: {service: "Database configuration"},
+  transports : [new winston.transports.Console(), new winston.transports.File({filename: logFilename})]
+})
+
 
   // Create dinamically tables based on the <TableName> e.g. Users, Products, Items, etc...
   const tableExists = async (connection: Connection, tableName: string): Promise<boolean> => {
@@ -59,24 +85,7 @@ if (ENVIRONMENT === 'development') {
     try {
       const connection: Connection = await createConnection(dbConfig);
 
-      console.log('Connected to the database server');
-
-      // Check if database exists
-      let dbExists;
-      if (DB_NAME) {
-        dbExists = await databaseExists(connection, DB_NAME);
-      }
-
-      if (!dbExists) {
-        // Create database if does not exists
-        console.log(`Database "${DB_NAME}" does not exists. Creating...`);
-        await connection.query('CREATE DATABASE ??', [DB_NAME]);
-        console.log(`Database "${DB_NAME}" created successfully`);
-      } else {
-        console.log(`Database "${DB_NAME}" already exists`);
-      }
-
-      console.log('Initializing schema from schema.sql...');
+      logger.info(`Connected to the database`)
 
       // Create Users table if does not exists
       const userTableExists = await tableExists(connection, 'Users');
@@ -85,26 +94,28 @@ if (ENVIRONMENT === 'development') {
         const createUserSchema = await schemaResolver(schemaPaths.createUserTable);
 
         await connection.query(createUserSchema);
-        console.log(`Database Updated. Users table created successfully`);
+        logger.info(`Database Updated. Users table created successfully`)
 
         // Populate tables with test data
         const populateUserSchema = await schemaResolver(schemaPaths.populateUserTable);
 
         await connection.query(populateUserSchema);
-        console.log(`Database Updated. Table has been populated`);
+        logger.info(`Database Updated. Table has been populated`)
+        
       } else {
         // Populate tables with test data
         const populateUserSchema = await schemaResolver(schemaPaths.populateUserTable);
 
         await connection.query(populateUserSchema);
-        console.log(`Users table already exists`);
+        logger.info(`Users table already exists`)
       }
 
-      console.log('Schema initialized successfully');
+      logger.info(`Schema initialized successfully`);
+
       await connection.end();
     } catch (err: unknown) {
-      console.error('Error initializing the database:', err instanceof Error ? err.message : err);
-      console.log('\n\n', err);
+      console.error('Error initializing the database:', err instanceof Error && err.message);
+      logger.error(`Database ${DB_NAME} does not exists.`)
       process.exit(1);
     }
   };
