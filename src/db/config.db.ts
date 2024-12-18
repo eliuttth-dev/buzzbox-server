@@ -2,7 +2,7 @@ import mysql, { createConnection, Connection, RowDataPacket } from 'mysql2/promi
 import { readFile } from 'fs/promises';
 import winston from 'winston';
 import dotenv from 'dotenv';
-import fs from "node:fs";
+import fs from 'node:fs';
 import path from 'path';
 
 dotenv.config();
@@ -35,25 +35,22 @@ const poll: any = mysql.createPool(dbConfig);
 
 // Check environment
 if (ENVIRONMENT === 'development') {
-
-  const logFilePath = path.resolve(__dirname, "../../", "logs");
-  const logFilename = path.resolve(logFilePath, "database.log");
+  const logFilePath = path.resolve(__dirname, '../../', 'logs');
+  const logFilename = path.resolve(logFilePath, 'database.log');
 
   (() => {
-      const folderExists = fs.existsSync(logFilePath);
-      const fileExists = fs.existsSync(logFilename)
-      if(folderExists === undefined) fs.mkdirSync(logFilePath, {recursive: true});
-      if(fileExists === undefined) fs.writeFileSync(logFilePath, logFilename, "utf-8"  );
-  })()
+    const folderExists = fs.existsSync(logFilePath);
+    const fileExists = fs.existsSync(logFilename);
+    if (folderExists === undefined) fs.mkdirSync(logFilePath, { recursive: true });
+    if (fileExists === undefined) fs.writeFileSync(logFilePath, logFilename, 'utf-8');
+  })();
 
-
-const logger = winston.createLogger({
-  level: "info",
-  format: winston.format.json(),
-  defaultMeta: {service: "Database configuration"},
-  transports : [new winston.transports.Console(), new winston.transports.File({filename: logFilename})]
-})
-
+  const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'Database configuration' },
+    transports: [new winston.transports.Console(), new winston.transports.File({ filename: logFilename })],
+  });
 
   // Create dinamically tables based on the <TableName> e.g. Users, Products, Items, etc...
   const tableExists = async (connection: Connection, tableName: string): Promise<boolean> => {
@@ -81,7 +78,7 @@ const logger = winston.createLogger({
     try {
       const connection: Connection = await createConnection(dbConfig);
 
-      logger.info(`Connected to the database`)
+      logger.info(`Connected to the database`);
 
       // Create Users table if does not exists
       const userTableExists = await tableExists(connection, 'Users');
@@ -90,20 +87,19 @@ const logger = winston.createLogger({
         const createUserSchema = await schemaResolver(schemaPaths.createUserTable);
 
         await connection.query(createUserSchema);
-        logger.info(`Database Updated. Users table created successfully`)
+        logger.info(`Database Updated. Users table created successfully`);
 
         // Populate tables with test data
         const populateUserSchema = await schemaResolver(schemaPaths.populateUserTable);
 
         await connection.query(populateUserSchema);
-        logger.info(`Database Updated. Table has been populated`)
-        
+        logger.info(`Database Updated. Table has been populated`);
       } else {
         // Populate tables with test data
         const populateUserSchema = await schemaResolver(schemaPaths.populateUserTable);
 
         await connection.query(populateUserSchema);
-        logger.info(`Users table already exists`)
+        logger.info(`Users table already exists`);
       }
 
       logger.info(`Schema initialized successfully`);
@@ -111,7 +107,7 @@ const logger = winston.createLogger({
       await connection.end();
     } catch (err: unknown) {
       console.error('Error initializing the database:', err instanceof Error && err.message);
-      logger.error(`Database ${DB_NAME} does not exists.`)
+      logger.error(`Database ${DB_NAME} does not exists.`);
       process.exit(1);
     }
   };
